@@ -28,13 +28,13 @@ jobs:
       with:
         github-token: ${{ steps.installationToken.outputs.token }}
         script: |
-          console.info("${{ github.sha }}");
+          console.info("${{ github.event.pull_request.head.sha }}");
 
           await github.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             name: "Installation Token Integration Test",
-            head_sha: "${{ github.sha }}",
+            head_sha: "${{ github.event.pull_request.head.sha }}",
             status: "completed",
             conclusion: "success"
           })
