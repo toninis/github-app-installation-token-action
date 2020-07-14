@@ -1,6 +1,6 @@
 name: Create GitHub App Installation Token
 author: jon wong <j@jnwng.com>
-description: A GitHub Action to make it simpler to retrieve a GitHub App's installation access token, primarily to facilitate the composition of GitHub Actions workflows.
+description: A GitHub Action to retrieve a GitHub App's installation access token, making it easy to compose GitHub Actions workflows.
 branding:
   color: green
   icon: link
