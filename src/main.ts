@@ -1,16 +1,15 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {getToken} from './get-token'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`)
+    const appId = parseInt(core.getInput('appId'), 10)
+    const installationId = parseInt(core.getInput('installationId'), 10)
+    const privateKey = core.getInput('privateKey')
 
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const {token} = await getToken({appId, installationId, privateKey})
 
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('token', token)
   } catch (error) {
     core.setFailed(error.message)
   }

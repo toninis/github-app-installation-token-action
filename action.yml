@@ -1,10 +1,19 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: Create GitHub App Installation Token
+author: jon wong <j@jnwng.com>
+description: Generates a JWT token to authenticate requests to a GitHub App
 inputs:
-  myInput:              # change this
-    description: 'input description here'
-    default: 'default value if applicable'
+  appId:
+    description: The GitHub App ID
+    required: true
+  installationId:
+    description: The GitHub App installation ID
+    required: true
+  privateKey:
+    description: The private key used to sign the JWT
+    required: true
+outputs:
+  token:
+    description: The generated RS256-signed JWT
 runs:
-  using: 'node12'
-  main: 'dist/index.js'
+  using: "node12"
+  main: "dist/index.js"

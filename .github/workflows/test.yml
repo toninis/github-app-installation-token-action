@@ -19,5 +19,22 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: ./
+      id: installationToken
       with: 
-        milliseconds: 1000
+        appId: 72750
+        installationId: 10503340
+        privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    - uses: actions/github-script@master
+      with:
+        github-token: ${{ steps.installationToken.outputs.token }}
+        script: |
+          console.info("${{ github.event.pull_request.head.sha }}");
+
+          await github.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: "Installation Token Integration Test",
+            head_sha: "${{ github.event.pull_request.head.sha }}",
+            status: "completed",
+            conclusion: "success"
+          })

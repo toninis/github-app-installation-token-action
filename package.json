@@ -25,9 +25,13 @@
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.0"
+    "@actions/core": "^1.2.0",
+    "@octokit/auth-app": "^2.4.7",
+    "@octokit/rest": "^18.0.0",
+    "fetch-mock": "^9.10.3"
   },
   "devDependencies": {
+    "@octokit/types": "^5.0.1",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.7.12",
     "@typescript-eslint/parser": "^2.8.0",
@@ -40,6 +44,7 @@
     "js-yaml": "^3.13.1",
     "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "universal-user-agent": "^5.0.0"
   }
 }
