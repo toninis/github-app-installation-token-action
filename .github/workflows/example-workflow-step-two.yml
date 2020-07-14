@@ -26,7 +26,7 @@ jobs:
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
           script: |
-            const { data: { id } } await github.checks.create({
+            const { data: { id } } = await github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: "Step Two",
