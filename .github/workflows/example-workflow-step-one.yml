@@ -17,11 +17,6 @@ jobs:
           installationId: 10503340
           privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
-      - if: github.event_name == 'push'
-        run: echo '::set-env name=SHA::${{ github.event.after }}'
-      - if: github.event_name == 'pull_request'
-        run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
-
       # This is where the magic begins — the "completion" of this check will trigger
       # the `example-workflow-step-two` GitHub Actions workflow.
       # Critically, though, _any_ part of your system can create and complete these check_runs, including GitHub Actions themselves.
@@ -33,7 +28,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               name: "Step One",
-              head_sha: "${{ env.SHA }}",
+              head_sha: "${{ github.event.check_run.head_sha }}",
               status: "completed",
               conclusion: "success"
             })
