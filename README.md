@@ -1,20 +1,73 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+![build-test](https://github.com/jnwng/github-app-installation-token-action/workflows/build-test/badge.svg)
 
-# Create a JavaScript Action using TypeScript
+# GitHub App Installation Token Action
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+You find yourself perusing the [GitHub Check Runs](https://docs.github.com/en/rest/reference/checks#runs) docs, thinking to yourself, "hmm, this is actually incredibly powerful! i'd love to use it.". You get down to brass tacks, and find that it is the right solution for your problem—you have an existing build system that you want to integrate with the GitHub PR flow!
 
-This template includes compilication support, tests, a validation workflow, publishing, and versioning guidance.  
+In order to use GitHub Check Runs to its fullest, you need a [GitHub App](https://docs.github.com/en/developers/apps), but maintaining a webhook-driven workflow just doesn't sit right with you, especially since you know that GitHub Actions has support for [`check_run`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#check_run) events; why do I even need a webhook when I can create and manage check runs within GitHub Actions itself?
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+You probably find out that, hey, I can use the provided `GITHUB_TOKEN` in my Actions workflow to create my own custom checks! Yay! It looks wonderful. But how can you create a _sequence_ of checks? You realize, unfortunately, that GitHub Actions workflows cannot trigger other workflows (except when you pass a [personal access token](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#triggering-new-workflows-using-a-personal-access-token)). Awesome! I can decompose the sections of my complex workflow into their own workflows. But... check runs are made for GitHub Apps, not personal users, and thus I've caught you in my trap:
 
-## Create an action from this template
+**When you want to be able to respond to `check_run` events in different GitHub Actions workflows, this is the action you need**
 
-Click the `Use this Template` and provide the new repo details for your action
+By providing some key information to this action, it will return you your GitHub App's [installation access token](https://docs.github.com/en/rest/reference/apps#create-an-installation-access-token-for-an-app), which you can in turn use to invoke all sort of GitHub APIs, the result of which will trigger as many GitHub Actions workflows as you might ever want. You _could_ do this some other way, it is just a lot simpler to do it this way.
 
-## Code in Master
+## Input
+
+| Key                     |   Type   | Required | Description                                                             |
+| ----------------------- | :------: | :------: | ----------------------------------------------------------------------- |
+| `appId`                 | `int`    |   Yes    | Your GitHub App's id                                                    |
+| `installationId`        | `int`    |   Yes    | The installation id of the the GitHub App in this repo / org            |
+| `privateKey`            | `string` |   Yes    | The private key associated to the GitHub App (typically an RSA private key)|
+
+**Be sure to store your `privateKey` [as a secret](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) in GitHub Actions!**
+
+## Output
+
+This action returns the relevant installation token for use in subsequent steps, like [actions/github-script](https://github.com/actions/github-script)
+
+| Property          | Type      | Description                                                                         |
+| ----------------- | --------- | ----------------------------------------------------------------------------------- |
+| `token`           | `string`  | A GitHub App [installation access token](https://docs.github.com/en/rest/reference/apps#create-an-installation-access-token-for-an-app)|
+
+## Examples
+
+### Use in a workflow
+
+```yml
+jobs:
+  createCheckRun:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: ./
+      id: installationToken
+      with: 
+        appId: 72750
+        installationId: 10503340
+        privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
+    - uses: actions/github-script@master
+      with:
+        github-token: ${{ steps.installationToken.outputs.token }}
+        script: |
+          await github.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: "Installation Token Integration Test",
+            head_sha: "${{ github.event.pull_request.head.sha }}",
+            status: "completed",
+            conclusion: "success"
+          })
+```
+
+#### Note for use with `check_run`
+The `GITHUB_SHA` environment variable (and in turn, the `github.sha` variable provided to the expression engine) typically refers to the last _merge_ commit on the branch (see the [`pull_request`](https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request) event), not the actual commit that the user would see.
+
+**For the `pull_request` event**: use `github.event.pull_request.head.sha` for the correct SHA
+
+**For the `push` event**: use `github.event.after` for the correct SHA
+
+## Development
 
 Install the dependencies  
 ```bash
@@ -29,44 +82,7 @@ $ npm run build && npm run pack
 Run the tests :heavy_check_mark:  
 ```bash
 $ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
 ```
-
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
 
 ## Publish to a distribution branch
 
@@ -83,18 +99,6 @@ $ git push origin releases/v1
 Your action is now published! :rocket: 
 
 See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml)])
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
 
 ## Usage:
 
