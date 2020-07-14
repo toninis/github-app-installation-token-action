@@ -22,33 +22,19 @@ jobs:
       - if: github.event_name == 'pull_request'
         run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
       - uses: actions/github-script@master
+        id: stepTwo
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
           script: |
-            await github.checks.create({
+            const { data: { id } } await github.checks.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_run_id: "${{ github.event.check_run.id }}",
+              name: "Step Two",
+              head_sha: "${{ github.event.check_run.head_sha }}",
               status: "in_progress",
             })
+            return id;
 
-  endStepTwo:
-    needs: beginStepTwo
-    name: Finishing the second job in a complex workflow.
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: ./
-        id: installationToken
-        with: 
-          appId: 72750
-          installationId: 10503340
-          privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
-
-      - if: github.event_name == 'push'
-        run: echo '::set-env name=SHA::${{ github.event.after }}'
-      - if: github.event_name == 'pull_request'
-        run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
       - uses: actions/github-script@master
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
@@ -56,7 +42,7 @@ jobs:
             await github.checks.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              check_run_id: "${{ github.event.check_run.id }}",
+              check_run_id: "${{ steps.stepTwo.outputs.result }}",
               status: "completed",
               conclusion: "success"
             })
