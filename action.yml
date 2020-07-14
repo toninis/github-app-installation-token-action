@@ -16,4 +16,4 @@ outputs:
     description: The generated RS256-signed JWT
 runs:
   using: "node12"
-  main: "lib/main.js"
+  main: "dist/index.js"
