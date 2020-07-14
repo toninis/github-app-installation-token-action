@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import {getUserAgent} from 'universal-user-agent'
 import fetchMock from 'fetch-mock'
 
 import {getToken} from '../src/get-token'
 
-const userAgent = `octokit-core.js/0.0.0-development ${getUserAgent()}`
-
+// Mostly copied from https://github.com/octokit/core.js/blob/9aabef3116bb7ed6dc7f0e4173a83d0a5e5809b9/test/auth.test.ts#L177-L264
+// to ensure that we're calling the correct endpoints via Octokit
 test('auth = createAppAuth()', async () => {
   const APP_ID = 1
   const PRIVATE_KEY = `-----BEGIN RSA PRIVATE KEY-----
@@ -35,9 +34,6 @@ ZcJjRIt8w8g/s4X6MhKasBYm9s3owALzCuJjGzUKcDHiO2DKu1xXAb0SzRcTzUCn
 9/49J6WTD++EajN7FhktUSYxukdWaCocAQJTDNYP0K88G4rtC2IYy5JFn9SWz5oh
 x//0u+zd/R/QRUzLOw4N72/Hu+UG6MNt5iDZFCtapRaKt6OvSBwy8w==
 -----END RSA PRIVATE KEY-----`
-  // see https://runkit.com/gr2m/reproducable-jwt
-  const BEARER =
-    'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOi0zMCwiZXhwIjo1NzAsImlzcyI6MX0.q3foRa78U3WegM5PrWLEh5N0bH1SD62OqW66ZYzArp95JBNiCbo8KAlGtiRENCIfBZT9ibDUWy82cI4g3F09mdTq3bD1xLavIfmTksIQCz5EymTWR5v6gL14LSmQdWY9lSqkgUG0XCFljWUglEP39H4yeHbFgdjvAYg3ifDS12z9oQz2ACdSpvxPiTuCC804HkPVw8Qoy0OSXvCkFU70l7VXCVUxnuhHnk8-oCGcKUspmeP6UdDnXk-Aus-eGwDfJbU2WritxxaXw6B4a3flTPojkYLSkPBr6Pi0H2-mBsW_Nvs0aLPVLKobQd4gqTkosX3967DoAG8luUMhrnxe8Q'
 
   const mock = fetchMock
     .sandbox()
