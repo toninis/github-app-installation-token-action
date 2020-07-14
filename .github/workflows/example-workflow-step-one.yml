@@ -1,0 +1,40 @@
+name: Step One
+on:
+  check_run:
+    types: [created]
+
+jobs:
+  stepOne:
+    name: The first job in a complex workflow.
+    runs-on: ubuntu-latest
+    if: github.event.check_run.name == 'Step One'
+    steps:
+      - uses: actions/checkout@master
+      - uses: ./
+        id: installationToken
+        with: 
+          appId: 72750
+          installationId: 10503340
+          privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+      - if: github.event_name == 'push'
+        run: echo '::set-env name=SHA::${{ github.event.after }}'
+      - if: github.event_name == 'pull_request'
+        run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
+
+      # This is where the magic begins — the "completion" of this check will trigger
+      # the `example-workflow-step-two` GitHub Actions workflow.
+      # Critically, though, _any_ part of your system can create and complete these check_runs, including GitHub Actions themselves.
+      - uses: actions/github-script@master
+        with:
+          github-token: ${{ steps.installationToken.outputs.token }}
+          script: |
+            await github.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Step One",
+              head_sha: "${{ env.SHA }}",
+              status: "completed",
+              conclusion: "success"
+            })
+
