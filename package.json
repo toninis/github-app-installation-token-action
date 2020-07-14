@@ -25,9 +25,12 @@
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.0"
+    "@actions/core": "^1.2.0",
+    "@octokit/auth-app": "^2.4.7",
+    "@octokit/rest": "^18.0.0"
   },
   "devDependencies": {
+    "@octokit/types": "^5.0.1",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.7.12",
     "@typescript-eslint/parser": "^2.8.0",
