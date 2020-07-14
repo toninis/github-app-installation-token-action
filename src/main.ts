@@ -3,11 +3,11 @@ import {getToken} from './get-token'
 
 async function run(): Promise<void> {
   try {
-    const appId = core.getInput('appId')
-    const installationId = core.getInput('installationId')
+    const appId = parseInt(core.getInput('appId'), 10)
+    const installationId = parseInt(core.getInput('installationId'), 10)
     const privateKey = core.getInput('privateKey')
 
-    const {token} = getToken({appId, installationId, privateKey})
+    const {token} = await getToken({appId, installationId, privateKey})
 
     core.setOutput('token', token)
   } catch (error) {
