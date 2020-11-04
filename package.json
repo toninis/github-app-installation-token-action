@@ -26,10 +26,10 @@
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@types/nock": "^11.1.0",
-    "esbuild": "^0.8.3",
     "github-app-installation-token": "^1.0.2"
   },
   "devDependencies": {
+    "esbuild": "^0.8.3",
     "nock": "^13.0.4",
     "@octokit/types": "^5.0.1",
     "@types/jest": "^24.0.23",
