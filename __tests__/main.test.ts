@@ -73,7 +73,6 @@ x//0u+zd/R/QRUzLOw4N72/Hu+UG6MNt5iDZFCtapRaKt6OvSBwy8w==
 
   try {
     await run()
-    debugger
     expect(setOutput).toHaveBeenCalled()
     expect(github.isDone()).toBe(true)
   } catch (e) {
