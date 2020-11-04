@@ -29,17 +29,17 @@
     "github-app-installation-token": "^1.0.2"
   },
   "devDependencies": {
-    "esbuild": "^0.8.3",
-    "nock": "^13.0.4",
     "@octokit/types": "^5.0.1",
     "@types/jest": "^24.0.23",
     "@types/node": "^12.7.12",
     "@typescript-eslint/parser": "^2.8.0",
+    "esbuild": "^0.8.3",
     "eslint": "^5.16.0",
     "eslint-plugin-github": "^2.0.0",
     "eslint-plugin-jest": "^22.21.0",
     "jest": "^24.9.0",
     "js-yaml": "^3.13.1",
+    "nock": "^13.0.4",
     "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
     "typescript": "^3.6.4"
