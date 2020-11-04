@@ -1,18 +1,16 @@
-import * as core from '@actions/core'
-import {getToken} from './get-token'
+import {setFailed, setOutput, getInput} from '@actions/core'
+import {getToken} from 'github-app-installation-token'
 
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
-    const appId = parseInt(core.getInput('appId'), 10)
-    const installationId = parseInt(core.getInput('installationId'), 10)
-    const privateKey = core.getInput('privateKey')
+    const appId = parseInt(getInput('appId'), 10)
+    const installationId = parseInt(getInput('installationId'), 10)
+    const privateKey = getInput('privateKey')
 
     const {token} = await getToken({appId, installationId, privateKey})
 
-    core.setOutput('token', token)
+    setOutput('token', token)
   } catch (error) {
-    core.setFailed(error.message)
+    setFailed(error.message)
   }
 }
-
-run()
