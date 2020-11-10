@@ -1,11 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/camelcase */
-import fetchMock from 'fetch-mock'
+import nock from 'nock'
+import * as actions from '@actions/core'
+import {run} from '../src/main'
+jest.mock('@actions/core')
 
-import {getToken} from '../src/get-token'
+const setOutput = actions.setOutput as jest.Mock<any>
+const setFailed = actions.setFailed as jest.Mock<any>
+const getInput = actions.getInput as jest.Mock<any>
 
-// Mostly copied from https://github.com/octokit/core.js/blob/9aabef3116bb7ed6dc7f0e4173a83d0a5e5809b9/test/auth.test.ts#L177-L264
-// to ensure that we're calling the correct endpoints via Octokit
+const GITHUB_URL = 'https://api.github.com'
 test('auth = createAppAuth()', async () => {
+  beforeEach(() => {
+    getInput.mockClear()
+    setFailed.mockClear()
+    setOutput.mockClear()
+  })
+
   const APP_ID = 1
   const PRIVATE_KEY = `-----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEA1c7+9z5Pad7OejecsQ0bu3aozN3tihPmljnnudb9G3HECdnH
@@ -35,28 +47,35 @@ ZcJjRIt8w8g/s4X6MhKasBYm9s3owALzCuJjGzUKcDHiO2DKu1xXAb0SzRcTzUCn
 x//0u+zd/R/QRUzLOw4N72/Hu+UG6MNt5iDZFCtapRaKt6OvSBwy8w==
 -----END RSA PRIVATE KEY-----`
 
-  const mock = fetchMock
-    .sandbox()
-    .postOnce('https://api.github.com/app/installations/123/access_tokens', {
-      token: 'secret-installation-token123',
-      expires_at: '1970-01-01T01:00:00.000Z',
-      permissions: {
-        metadata: 'read'
-      },
-      repository_selection: 'all'
-    })
+  const mockedInput = {
+    appId: APP_ID,
+    installationId: 123,
+    privateKey: PRIVATE_KEY
+  }
 
-  const {token} = await getToken(
-    {
-      appId: APP_ID,
-      installationId: 123,
-      privateKey: PRIVATE_KEY
+  const getAccessTokensURL = (installationID: number): string =>
+    `/app/installations/${installationID}/access_tokens`
+  const response = {
+    token: 'secret-installation-token123',
+    expires_at: '1970-01-01T01:00:00.000Z',
+    permissions: {
+      metadata: 'read'
     },
-    {
-      fetch: mock
-    }
+    repository_selection: 'all'
+  }
+  const github = nock(GITHUB_URL)
+    .post(getAccessTokensURL(123))
+    .reply(201, response)
+
+  getInput.mockImplementation((key: keyof typeof mockedInput): string =>
+    String(mockedInput[key])
   )
 
-  expect(token).toEqual('secret-installation-token123')
-  expect(mock.done()).toBe(true)
+  try {
+    await run()
+    expect(setOutput).toHaveBeenCalled()
+    expect(github.isDone()).toBe(true)
+  } catch (e) {
+    throw e
+  }
 })
