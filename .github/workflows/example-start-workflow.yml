@@ -22,8 +22,12 @@ jobs:
           privateKey: ${{ secrets.GH_APP_PRIVATE_KEY }}
 
       - if: github.event_name == 'push'
+        env: 
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         run: echo '::set-env name=SHA::${{ github.event.after }}'
       - if: github.event_name == 'pull_request'
+        env: 
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
       - uses: actions/github-script@master
         with:
