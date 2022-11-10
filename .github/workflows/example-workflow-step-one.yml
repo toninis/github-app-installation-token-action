@@ -20,7 +20,7 @@ jobs:
       # This is where the magic begins — the "completion" of this check will trigger
       # the `example-workflow-step-two` GitHub Actions workflow.
       # Critically, though, _any_ part of your system can create and complete these check_runs, including GitHub Actions themselves.
-      - uses: actions/github-script@master
+      - uses: actions/github-script@v2
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
           script: |
@@ -31,4 +31,3 @@ jobs:
               status: "completed",
               conclusion: "success"
             })
-
