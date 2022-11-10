@@ -19,9 +19,13 @@ jobs:
 
       - if: github.event_name == 'push'
         run: echo '::set-env name=SHA::${{ github.event.after }}'
+        env: 
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       - if: github.event_name == 'pull_request'
         run: echo '::set-env name=SHA::${{ github.event.pull_request.head.sha }}'
-      - uses: actions/github-script@master
+        env: 
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - uses: actions/github-script@v2
         id: stepTwo
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
@@ -35,7 +39,7 @@ jobs:
             })
             return id;
 
-      - uses: actions/github-script@master
+      - uses: actions/github-script@v2
         with:
           github-token: ${{ steps.installationToken.outputs.token }}
           script: |
