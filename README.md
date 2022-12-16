@@ -14,11 +14,12 @@ By providing some key information to this action, it will return you your GitHub
 
 ## Input
 
-| Key                     |   Type   | Required | Description                                                             |
-| ----------------------- | :------: | :------: | ----------------------------------------------------------------------- |
-| `appId`                 | `int`    |   Yes    | Your GitHub App's id                                                    |
-| `installationId`        | `int`    |   Yes    | The installation id of the the GitHub App in this repo / org            |
-| `privateKey`            | `string` |   Yes    | The private key associated to the GitHub App (typically an RSA private key)|
+| Key              |   Type   | Required | Description                                                                                                                 |
+| ---------------- | :------: | :------: | --------------------------------------------------------------------------------------------------------------------------- |
+| `appId`          |  `int`   |   Yes    | Your GitHub App's id                                                                                                        |
+| `installationId` |  `int`   |   Yes    | The installation id of the the GitHub App in this repo / org                                                                |
+| `privateKey`     | `string` |   Yes    | The private key associated to the GitHub App (typically an RSA private key)                                                 |
+| `baseUrl`        | `string` |    No    | Custom base url of Github if for example self hosted in enterprise context. For example: `https://github.domain.com/api/v3` |
 
 **Be sure to store your `privateKey` [as a secret](https://docs.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets) in GitHub Actions!**
 
@@ -26,9 +27,9 @@ By providing some key information to this action, it will return you your GitHub
 
 This action returns the relevant installation token for use in subsequent steps, like [actions/github-script](https://github.com/actions/github-script)
 
-| Property          | Type      | Description                                                                         |
-| ----------------- | --------- | ----------------------------------------------------------------------------------- |
-| `token`           | `string`  | A GitHub App [installation access token](https://docs.github.com/en/rest/reference/apps#create-an-installation-access-token-for-an-app)|
+| Property | Type     | Description                                                                                                                             |
+| -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `token`  | `string` | A GitHub App [installation access token](https://docs.github.com/en/rest/reference/apps#create-an-installation-access-token-for-an-app) |
 
 ## Examples
 
