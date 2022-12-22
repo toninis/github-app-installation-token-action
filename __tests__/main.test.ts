@@ -50,7 +50,8 @@ x//0u+zd/R/QRUzLOw4N72/Hu+UG6MNt5iDZFCtapRaKt6OvSBwy8w==
   const mockedInput = {
     appId: APP_ID,
     installationId: 123,
-    privateKey: PRIVATE_KEY
+    privateKey: PRIVATE_KEY,
+    baseUrl: ''
   }
 
   const getAccessTokensURL = (installationID: number): string =>
@@ -73,6 +74,7 @@ x//0u+zd/R/QRUzLOw4N72/Hu+UG6MNt5iDZFCtapRaKt6OvSBwy8w==
 
   try {
     await run()
+    expect(setFailed).not.toHaveBeenCalled()
     expect(setOutput).toHaveBeenCalled()
     expect(github.isDone()).toBe(true)
   } catch (e) {
