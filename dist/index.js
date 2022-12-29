@@ -24719,7 +24719,8 @@ async function run() {
     const appId = parseInt((0, import_core.getInput)("appId"), 10);
     const installationId = parseInt((0, import_core.getInput)("installationId"), 10);
     const privateKey = (0, import_core.getInput)("privateKey");
-    const { token } = await (0, import_github_app_installation_token.getToken)({ appId, installationId, privateKey });
+    const baseUrl = (0, import_core.getInput)("baseUrl", { required: false });
+    const { token } = await (0, import_github_app_installation_token.getToken)({ appId, installationId, privateKey, baseUrl });
     (0, import_core.setOutput)("token", token);
   } catch (error) {
     (0, import_core.setFailed)(error.message);
